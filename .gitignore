@@ -13,6 +13,7 @@ __pycache__/*
 .*.swp
 */.ipynb_checkpoints/*
 .DS_Store
+*my_venv
 
 # Project files
 .ropeproject
