@@ -22,7 +22,10 @@ References:
 
 import argparse
 import logging
+from multiprocessing import BoundedSemaphore
 import sys
+import math
+from typing import List
 
 from python3 import __version__
 
@@ -31,6 +34,95 @@ __copyright__ = "Cody"
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
+
+
+# 704. Binary Search
+def findTargetFromList(self, nums: List[int], target: int) -> int:
+    begIndex = 0
+    endIndex = len(nums) - 1
+    
+    while begIndex <= endIndex:
+        currIndex = math.floor((begIndex + endIndex) / 2)
+        if nums[currIndex] == target:
+            return currIndex
+        elif nums[currIndex] > target :
+            print("currIndex: ")
+            print(currIndex)
+            endIndex = currIndex - 1
+        else:
+            print("currIndex: ")
+            print(currIndex)
+            begIndex = currIndex + 1
+
+    return -1
+
+
+# 702. Search in a Sorted Array of Unknown Size
+def findTargetFromUnknownSizeArrayObject(self, reader: 'ArrayReader', target: int) -> int:
+    if reader.get(0) == target:
+        return 0
+
+    # search boundaries
+    left, right = 0, 1
+    while reader.get(right) < target:
+        left = right
+        right <<= 1
+        
+    # binary search
+    while left <= right:
+        currIndex = left + ((right - left) >> 1)
+        num = reader.get(currIndex)
+        
+        if num == target:
+            return currIndex
+        if num > target:
+            right = currIndex - 1
+        else:
+            left = currIndex + 1
+
+    return -1
+
+
+# 1533. Find the index of the Large Integer
+def updateLR(self, n, LR):
+    mid = abs(-n>>1)-1
+    return [LR[0],LR[0]+mid], [LR[0]+n-mid-1,LR[1]]        
+
+def getIndex(self, reader: 'ArrayReader') -> int:
+    n = reader.length()
+    mid = abs(-n>>1)-1
+    L = [0,mid]
+    R = [n-mid-1,n-1]
+    
+    while L[1]-L[0]!=0 and R[1]-R[0]!=0:
+        where = reader.compareSub(L[0],L[1],R[0],R[1])
+        if where == 0:
+            return L[1]
+        elif where == 1:  # L
+            n = L[1]-L[0]+1
+            L,R = self.updateLR(n,L)
+        elif where == -1:  # R
+            n = R[1]-R[0]+1
+            L,R = self.updateLR(n,R)
+        
+    where = reader.compareSub(L[0],L[1],R[0],R[1])
+    if where == -1:
+        return R[0]
+    else:
+        return L[1]
+        
+
+# 278. First Bad Version
+def firstBadVersion(self, n: int) -> int:
+    left = 1
+    right = n
+    while left < right:
+        mid = left + (right - left) / 2
+        if isBadVersion(mid) is True:
+            right = mid
+        else:
+            left = mid + 1
+    return int(left)
 
 
 # ---- Python API ----
